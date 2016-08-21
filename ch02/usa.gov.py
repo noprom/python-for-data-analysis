@@ -12,3 +12,6 @@ path = '../data/ch02/usagov_bitly_data2012-03-16-1331923249.txt'
 print open(path).readline()
 records = [json.loads(line) for line in open(path)]
 print records[0]
+
+# 获取列
+print records[0]['tz']
