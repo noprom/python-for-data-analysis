@@ -8,6 +8,6 @@
 
 import pandas as pd
 
-data_path = '../data/names/'
+data_path = '../data/ch02/names/'
 names1880 = pd.read_csv(data_path + 'yob1880.txt', names=['name', 'sex', 'births'])
 print names1880[:5]
