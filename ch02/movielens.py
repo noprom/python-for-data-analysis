@@ -27,6 +27,7 @@ data = pd.merge(pd.merge(ratings, users), movies)
 print data[:1]
 print data.ix[0]
 
+# TODO: pivot_table operation
 # To get mean movie ratings for each film grouped by gender, we can use the pivot_table method
 # Some bugs here
 # mean_ratings = data.pivot_table(ratings, rows='title', cols='gender', aggfunc='mean')
