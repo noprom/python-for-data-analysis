@@ -21,3 +21,8 @@ movies = pd.read_table(movie_lens_data_path + 'movies.dat', sep='::', header=Non
 print users[:5]
 print ratings[:5]
 print movies[:5]
+
+# merge all the data
+data = pd.merge(pd.merge(ratings, users), movies)
+print data[:1]
+print data.ix[0]
