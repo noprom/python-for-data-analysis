@@ -8,7 +8,6 @@
 
 import pandas as pd
 import numpy as np
-import matplotlib as plt
 
 data_path = '../data/ch02/names/'
 names1880 = pd.read_csv(data_path + 'yob1880.txt', names=['name', 'sex', 'births'])
@@ -69,3 +68,30 @@ print total_births
 
 subset = total_births[['John', 'Harry', 'Mary', 'Marilyn']]
 subset.plot(subplots=True, figsize=(12, 10), grid=False, title="Number of births per year")
+
+# Measuring the increase in naming diversity
+table = pd.pivot_table(top1000, index='year', columns='sex', values='prop', aggfunc=sum)
+table.plot(title='Sum of table1000.prop by year and sex', yticks=np.linspace(0, 1.2, 13), xticks=range(1880, 2020, 10))
+
+df = boys[boys.year == 2010]
+print df[:10]
+
+prop_cumsum = df.sort_values(by='prop', ascending=False).prop.cumsum()
+print prop_cumsum[:10]
+print prop_cumsum.searchsorted(0.5)
+
+# 1990
+df = boys[boys.year == 1900]
+in1900 = df.sort_values(by='prop', ascending=False).prop.cumsum()
+print in1900.searchsorted(0.5) + 1
+
+
+def get_quantile_count(group, q=0.5):
+    group = group.sort_values(by='prop', ascending=False)
+    return group.prop.cumsum().searchsorted(q) + 1
+
+
+diversity = top1000.groupby(['year', 'sex']).apply(get_quantile_count)
+diversity = diversity.unstack('sex')
+print diversity.head()
+diversity.plot(title="Number of popular names in top 50%")
