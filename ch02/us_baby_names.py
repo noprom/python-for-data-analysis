@@ -7,6 +7,8 @@
 '''
 
 import pandas as pd
+import numpy as np
+import matplotlib as plt
 
 data_path = '../data/ch02/names/'
 names1880 = pd.read_csv(data_path + 'yob1880.txt', names=['name', 'sex', 'births'])
@@ -27,8 +29,21 @@ for year in years:
 
 # Concatenate everything into a single DataFrame
 names = pd.concat(pieces, ignore_index=True)
-print names.describe
+# print names.describe
 
-# TODO: pivot_table operation
-total_births = names.pivot_table('births', rows='year', cols='sex', aggfunc=sum)
-total_births.tail()
+# pivot_table operation
+total_births = pd.pivot_table(names, index='year', values='births', columns='sex', aggfunc=np.sum)
+print total_births.tail()
+# TODO
+total_births.plot(title='Total births by sex and year')
+
+
+def add_prop(group):
+    # Integer division floors
+    births = group.births.astype(float)
+    group['prop'] = births / births.sum()
+    return group
+
+
+names = names.groupby(['year', 'sex']).apply(add_prop)
+print names.head()
