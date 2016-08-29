@@ -47,3 +47,15 @@ def add_prop(group):
 
 names = names.groupby(['year', 'sex']).apply(add_prop)
 print names.head()
+
+# use np.allclose to check that the group sums are sufficiently close to (but perhaps not exactly equal to) 1:
+print np.allclose(names.groupby(['year', 'sex']).prop.sum(), 1)
+
+
+def get_top1000(group):
+    return group.sort_values(by='births', ascending=False)[:1000]
+
+
+grouped = names.groupby(['year', 'sex'])
+top1000 = grouped.apply(get_top1000)
+print top1000
