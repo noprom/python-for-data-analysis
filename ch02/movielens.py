@@ -7,6 +7,7 @@
 '''
 
 import pandas as pd
+import numpy as np
 
 movie_lens_data_path = '../data/ch02/movielens/'
 unames = ['user_id', 'gender', 'age', 'occupation', 'zip']
@@ -27,11 +28,9 @@ data = pd.merge(pd.merge(ratings, users), movies)
 print data[:1]
 print data.ix[0]
 
-# TODO: pivot_table operation
 # To get mean movie ratings for each film grouped by gender, we can use the pivot_table method
-# Some bugs here
-# mean_ratings = data.pivot_table(ratings, rows='title', cols='gender', aggfunc='mean')
-# print mean_ratings[:5]
+mean_ratings = pd.pivot_table(data, index='title', columns='gender', values='rating', aggfunc=np.mean)
+print mean_ratings[:5]
 
 ratings_by_title = data.groupby('title').size()
 print ratings_by_title[:10]
@@ -39,6 +38,16 @@ print ratings_by_title[:10]
 # top 250 ratings
 active_titles = ratings_by_title.index[ratings_by_title >= 250]
 print active_titles
+
+# top films among female viewers
+top_female_ratings = mean_ratings.sort_values(by='F', ascending=False)
+print top_female_ratings[:10]
+
+# Measuring rating disagreement
+mean_ratings['diff'] = mean_ratings['M'] - mean_ratings['F']
+sorted_by_diff = mean_ratings.sort_values(by='diff')
+print sorted_by_diff[:15]
+exit(0)
 
 # Standard deviation of rating grouped by title
 rating_std_by_title = data.groupby('title')['rating'].std()
