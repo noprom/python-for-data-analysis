@@ -47,7 +47,9 @@ print top_female_ratings[:10]
 mean_ratings['diff'] = mean_ratings['M'] - mean_ratings['F']
 sorted_by_diff = mean_ratings.sort_values(by='diff')
 print sorted_by_diff[:15]
-exit(0)
+
+# Reverse order of rows, take first 15 rows
+print sorted_by_diff[:-1][:15]
 
 # Standard deviation of rating grouped by title
 rating_std_by_title = data.groupby('title')['rating'].std()
