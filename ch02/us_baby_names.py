@@ -59,3 +59,13 @@ def get_top1000(group):
 grouped = names.groupby(['year', 'sex'])
 top1000 = grouped.apply(get_top1000)
 print top1000
+
+# Analyzing Naming Trends
+boys = top1000[top1000.sex == 'M']
+girls = top1000[top1000.sex == 'F']
+
+total_births = pd.pivot_table(top1000, index='year', columns='name', values='births', aggfunc=np.sum)
+print total_births
+
+subset = total_births[['John', 'Harry', 'Mary', 'Marilyn']]
+subset.plot(subplots=True, figsize=(12, 10), grid=False, title="Number of births per year")
