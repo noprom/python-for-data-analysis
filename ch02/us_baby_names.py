@@ -8,6 +8,7 @@
 
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 data_path = '../data/ch02/names/'
 names1880 = pd.read_csv(data_path + 'yob1880.txt', names=['name', 'sex', 'births'])
@@ -33,7 +34,6 @@ names = pd.concat(pieces, ignore_index=True)
 # pivot_table operation
 total_births = pd.pivot_table(names, index='year', values='births', columns='sex', aggfunc=np.sum)
 print total_births.tail()
-# TODO
 total_births.plot(title='Total births by sex and year')
 
 
@@ -94,4 +94,39 @@ def get_quantile_count(group, q=0.5):
 diversity = top1000.groupby(['year', 'sex']).apply(get_quantile_count)
 diversity = diversity.unstack('sex')
 print diversity.head()
-diversity.plot(title="Number of popular names in top 50%")
+# diversity.plot(title="Number of popular names in top 50%")
+
+# The “Last letter” Revolution
+# extract last letter from name column
+get_last_letter = lambda x: x[-1]
+last_letters = names.name.map(get_last_letter)
+last_letters.name = 'last_letter'
+table = pd.pivot_table(names, index=last_letters, columns=['sex', 'year'], values='births', aggfunc=sum)
+print table[:10]
+subtable = table.reindex(columns=[1910, 1960, 2010], level='year')
+print subtable.head()
+print subtable.sum()
+letter_prop = subtable / subtable.sum().astype(float)
+
+# plot
+fig, axes = plt.subplots(2, 1, figsize=(10, 8))
+letter_prop['M'].plot(kind='bar', rot=0, ax=axes[0], title='Male')
+letter_prop['F'].plot(kind='bar', rot=0, ax=axes[1], title='Female', legend=False)
+
+letter_prop = table / table.sum().astype(float)
+dny_ts = letter_prop.ix[['d', 'n', 'y'], 'M'].T
+print dny_ts.head()
+dny_ts.plot()
+
+# Boy names that became girl names (and vice versa)
+all_names = top1000.name.unique()
+mask = np.array(['lesl' in x.lower() for x in all_names])
+lesley_like = all_names[mask]
+print lesley_like
+filtered = top1000[top1000.name.isin(lesley_like)]
+print filtered.groupby('name').births.sum()
+table = pd.pivot_table(filtered, index='year', values='births', columns='sex', aggfunc=sum)
+table = table.div(table.sum(1), axis=0)
+print table.tail()
+table.plot(style={'M': 'k-', 'F': 'k--'})
+plt.show()
