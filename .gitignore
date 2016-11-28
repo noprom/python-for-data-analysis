@@ -93,4 +93,4 @@ ENV/
 data
 *.pyc
 *.npy
-*.npz
+*.npz.DS_Store
